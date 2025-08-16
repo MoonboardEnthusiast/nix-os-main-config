@@ -40,7 +40,7 @@
           modules = shared-modules ++ [
             ./hosts/main_pc.nix
             ./modules/system/.bundle.nix
-            ./users/shyonae.nix
+            ./users/MoonboardEnthusiast.nix
             inputs.base16.nixosModule
             inputs.nix-index-database.nixosModules.nix-index
             {
@@ -59,7 +59,7 @@
           modules = shared-modules ++ [
             ./hosts/homelab_main_hp_sff.nix
             ./modules/system/.bundle.nix
-            ./users/shyonae-homelab.nix
+            ./users/MoonboardEnthusiast-homelab.nix
             inputs.base16.nixosModule
           ];
         };
@@ -71,7 +71,7 @@
           modules = shared-modules ++ [
             ./hosts/homelab_thinkpad_t440p_1.nix
             ./modules/system/.bundle.nix
-            ./users/shyonae-homelab.nix
+            ./users/MoonboardEnthusiast-homelab.nix
             inputs.base16.nixosModule
           ];
         };
@@ -83,7 +83,7 @@
           modules = shared-modules ++ [
             ./hosts/homelab_rd450.nix
             ./modules/system/.bundle.nix
-            ./users/shyonae-homelab.nix
+            ./users/MoonboardEnthusiast-homelab.nix
             inputs.base16.nixosModule
           ];
         };
@@ -95,7 +95,7 @@
           modules = shared-modules ++ [
             ./hosts/wsl_work.nix
             ./modules/system/.bundle.nix
-            ./users/shyonae-homelab.nix
+            ./users/MoonboardEnthusiast-homelab.nix
             inputs.base16.nixosModule
             inputs.nixos-wsl.nixosModules.wsl
             inputs.nix-ld.nixosModules.nix-ld

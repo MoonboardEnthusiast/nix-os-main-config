@@ -7,7 +7,7 @@
   config = lib.mkIf config.git.enable {
     programs.git = {
       enable = true;
-      userName = "shyonae";
+      userName = "MoonboardEnthusiast";
       userEmail = "scionae@gmail.com";
       aliases = {
         co = "checkout";
