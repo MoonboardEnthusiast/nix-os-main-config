@@ -1,4 +1,4 @@
-# Edit this configuration file to define what should be installed onj
+# Edit this configuration file to define what should be installed on
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
@@ -6,6 +6,7 @@
 # https://github.com/nix-community/NixOS-WSL
 
 { config, lib, pkgs, ... }:
+# In your configuration.nix or as an overlay
 let
   bazel8 = pkgs.bazel.overrideAttrs (oldAttrs: rec {
     version = "8.3.1"; # or whatever version you need
@@ -16,8 +17,7 @@ let
         "79da863df05fa4de79a82c4f9d4e710766f040bc519fd8b184a4d4d51345d5ba"; # You'll need to get the correct hash
     };
   });
-in 
-{
+in {
   imports = [
     # include NixOS-WSL modules
     <nixos-wsl/modules>
@@ -26,6 +26,12 @@ in
   wsl.enable = true;
   wsl.defaultUser = "nixos";
 
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+  # Add any libraries bazelisk might need
+  stdenv.cc.cc
+  glibc
+  ];
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It's perfectly fine and recommended to leave
@@ -33,8 +39,8 @@ in
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   nix.settings = {
-	substituters = ["https://cuda-maintainers.cachix.org"];
-	trusted-public-keys = [
+    substituters = [ "https://cuda-maintainers.cachix.org" ];
+    trusted-public-keys = [
       "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
     ];
   };
@@ -52,15 +58,10 @@ in
     gcc
     gdb
     cmake
-    bazelisk
-    (runCommand "bazel" {} ''
-    mkdir -p $out/bin
-    ln -s ${bazelisk}/bin/bazelisk $out/bin/bazel
-    '')
     gcc
     # or alternatively:
+    bazelisk 
     # clang
   ];
 }
-
 

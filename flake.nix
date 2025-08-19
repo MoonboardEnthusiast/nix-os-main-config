@@ -32,7 +32,9 @@
     in
     {
       nixosConfigurations = {
-
+        bazel = {
+          url ="bazel.nix"
+        };
         mainpc = nixpkgs.lib.nixosSystem {
 
           inherit specialArgs system;
