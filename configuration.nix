@@ -38,11 +38,22 @@ in {
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.cudaSupport = true;
   nix.settings = {
     substituters = [ "https://cuda-maintainers.cachix.org" ];
     trusted-public-keys = [
       "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
     ];
+  };
+    # Shell aliases for all users
+  environment.shellAliases = {
+    ll = "ls -l";
+    la = "ls -la";
+    grep = "grep --color=auto";
+    ".." = "cd ..";
+    bazel = "bazelisk";
+    nixrebuild = "sudo nixos-rebuild switch";
   };
   system.stateVersion = "25.05"; # Did you read the comment?
   environment.systemPackages = with pkgs; [
@@ -56,12 +67,28 @@ in {
     ripgrep
     # Optional but useful
     gcc
+    coreutils
+    go
     gdb
     cmake
-    gcc
+    gnumake
     # or alternatively:
     bazelisk 
     # clang
+    cudaPackages.cudatoolkit
   ];
+  # Enable OpenGL and CUDA
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
+  
+  # Load NVIDIA drivers
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia = {
+    modesetting.enable = true;
+    open = false; # Use proprietary drivers
+    nvidiaSettings = true;
+  };
 }
 
