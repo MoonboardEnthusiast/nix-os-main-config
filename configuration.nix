@@ -74,9 +74,28 @@ in {
     gnumake
     # or alternatively:
     bazelisk 
+    # system libraries that CUDA could need
+    libGLU
+    libGL
+    xorg.libXi
+    xorg.libXmu
+    freeglut
+    xorg.libXext
+    xorg.libX11
+    xorg.libXv
+    xorg.libXrandr
+    zlib
+    ncurses5
+    busybox
     # clang
     cudaPackages.cudatoolkit
+    cudaPackages.cudnn
+    linuxPackages.nvidia_x11
+    # shared clipboard
+    wl-clipboard
   ];
+  # Ensure NVIDIA kernel modules are loaded (WSL-specific)
+  boot.kernelModules = [ "nvidia" "nvidia-uvm" "nvidia-modeset" ];
   # Enable OpenGL and CUDA
   hardware.graphics = {
     enable = true;
@@ -84,11 +103,17 @@ in {
   };
   
   # Load NVIDIA drivers
-  services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.nvidia = {
-    modesetting.enable = true;
-    open = false; # Use proprietary drivers
-    nvidiaSettings = true;
+
+  # Add CUDA paths to system PATH and library paths
+  environment.sessionVariables = {
+      LD_LIBRARY_PATH = "/usr/lib/wsl/lib:${pkgs.cudaPackages.cudatoolkit}/lib:${pkgs.cudaPackages.cudnn}/lib";
+      CUDA_PATH = "${pkgs.cudaPackages.cudatoolkit}";
+      CUDA_ROOT = "${pkgs.cudaPackages.cudatoolkit}";
   };
+  environment.etc."ld.so.conf.d/wsl-nvidia.conf".text = "/usr/lib/wsl/lib";
+  # Use this to safely prepend to PATH
+  environment.extraInit = ''
+    export PATH="/usr/lib/wsl/lib:$PATH"
+  '';
 }
 
