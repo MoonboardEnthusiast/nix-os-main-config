@@ -93,6 +93,8 @@ in {
     linuxPackages.nvidia_x11
     # shared clipboard
     wl-clipboard
+    # clang compiler
+    clang_21
   ];
   # Ensure NVIDIA kernel modules are loaded (WSL-specific)
   boot.kernelModules = [ "nvidia" "nvidia-uvm" "nvidia-modeset" ];
@@ -106,14 +108,18 @@ in {
 
   # Add CUDA paths to system PATH and library paths
   environment.sessionVariables = {
+
+      LIBRARY_PATH = "/usr/lib/wsl/lib:${pkgs.cudaPackages.cudatoolkit}/lib:${pkgs.cudaPackages.cudnn}/lib";
       LD_LIBRARY_PATH = "/usr/lib/wsl/lib:${pkgs.cudaPackages.cudatoolkit}/lib:${pkgs.cudaPackages.cudnn}/lib";
       CUDA_PATH = "${pkgs.cudaPackages.cudatoolkit}";
       CUDA_ROOT = "${pkgs.cudaPackages.cudatoolkit}";
+      EXTRA_LDFLAGS="-L/lib -L${pkgs.cudaPackages.cudatoolkit}/lib";
+      EXTRA_CCFLAGS="-I/usr/include -I${pkgs.cudaPackages.cudatoolkit}/include";
   };
   environment.etc."ld.so.conf.d/wsl-nvidia.conf".text = "/usr/lib/wsl/lib";
   # Use this to safely prepend to PATH
   environment.extraInit = ''
-    export PATH="/usr/lib/wsl/lib:$PATH"
+    export PATH="${pkgs.cudaPackages.cudatoolkit}/bin:/usr/lib/wsl/lib:$PATH"
   '';
 }
 
