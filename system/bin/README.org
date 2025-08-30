@@ -1,0 +1,1 @@
+Hosts tools that I need system wide like ranger, bazel, nvim

@@ -1,0 +1,1 @@
+Hosts all shell configuration flakes, will most likely result in zsh setup.

@@ -1,0 +1,1 @@
+Hosts user package nix configuration, most likely will start with only ranger config.

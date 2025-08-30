@@ -1,0 +1,1 @@
+Hosts nix configuration flakes for language pkgs and setup. Most interesting addition will be cuda and bazel.

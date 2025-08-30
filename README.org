@@ -1,0 +1,2 @@
+This is largely copied from https://github.com/librephoenix/nixos-config and is used to set up my NixOs to my needs.
+Most likely the interesting parts stem from integrating cuda and bazel with this configuration. I would try to streamline the neovim setup and configuration aswell so that everything is fit to my needs. Adding the same for bazel in the future aswell as example projects integrating everything.
