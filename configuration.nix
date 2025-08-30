@@ -17,6 +17,19 @@ let
         "79da863df05fa4de79a82c4f9d4e710766f040bc519fd8b184a4d4d51345d5ba"; # You'll need to get the correct hash
     };
   });
+  cudaEnv = pkgs.buildEnv {
+    name = "cuda-unified";
+    paths = with pkgs.cudaPackages; [
+      cudatoolkit
+      cuda_cudart.static
+      ];
+    postBuild = ''
+    # Create lib64 symlink to lib if it doesn't exist
+    if [ -d "$out/lib" ] && [ ! -d "$out/lib64" ]; then
+      ln -s lib "$out/lib64"
+    fi
+    '';  
+    };
 in {
   imports = [
     # include NixOS-WSL modules
@@ -116,13 +129,11 @@ in {
   };
   
   # Load NVIDIA drivers
-
-  # Add CUDA paths to system PATH and library paths
+  # Create a unified cudaEnv for rules_cuda library lookup to work
   environment.sessionVariables = {
-
       LIBRARY_PATH = "/usr/lib/wsl/lib:${pkgs.cudaPackages.cudatoolkit}/lib:${pkgs.cudaPackages.cudnn}/lib:${pkgs.cudaPackages.cuda_cudart}/lib";
       LD_LIBRARY_PATH = "/usr/lib/wsl/lib:${pkgs.cudaPackages.cudatoolkit}/lib:${pkgs.cudaPackages.cudnn}/lib:${pkgs.cudaPackages.cuda_cudart}/lib";
-      CUDA_PATH = "${pkgs.cudaPackages.cudatoolkit}";
+      CUDA_PATH = "${cudaEnv}";
       CUDA_ROOT = "${pkgs.cudaPackages.cudatoolkit}";
       CUDA_CUDART_STATIC = "${pkgs.cudaPackages.cuda_cudart.static}";
       EXTRA_LDFLAGS="-L/lib -L${pkgs.cudaPackages.cudatoolkit}/lib";
