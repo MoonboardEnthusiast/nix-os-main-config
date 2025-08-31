@@ -36,9 +36,6 @@
   xdg.userDirs = {
     enable = true;
     createDirectories = true;
-    music = "${config.home.homeDirectory}/Media/Music";
-    videos = "${config.home.homeDirectory}/Media/Videos";
-    pictures = "${config.home.homeDirectory}/Media/Pictures";
     templates = "${config.home.homeDirectory}/Templates";
     download = "${config.home.homeDirectory}/Downloads";
     documents = "${config.home.homeDirectory}/Documents";
