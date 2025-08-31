@@ -1,0 +1,48 @@
+name: Documentation
+
+on:
+  workflow_call: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "${{ github.ref == 'refs/heads/main' && 'docs' || github.run_id }}"
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Documentation 📕
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Install Nix ❄️
+        uses: ./.github/actions/install-nix
+
+      - name: Build documentation 🛠️
+        id: build
+        uses: ./.github/actions/build-nix-expression
+        with:
+          expression: ".#docs"
+
+      - name: Patch 404.html 🩹
+        run: |
+          cp -r ${{ steps.build.outputs.derivation }}/. dist
+          chmod -R +w dist
+          sed -i 's|<base href="/">|<base href="/NixOS-WSL">|' dist/404.html
+
+      - name: Upload documentation 📥
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages 🚀
+        if: github.ref == 'refs/heads/main'
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5

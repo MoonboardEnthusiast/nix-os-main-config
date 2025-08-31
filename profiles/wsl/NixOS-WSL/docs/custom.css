@@ -1,0 +1,18 @@
+:root {
+  --mono-font: "Cascadia Mono",
+    "Source Code Pro",
+    Consolas,
+    "Ubuntu Mono",
+    Menlo,
+    "DejaVu Sans Mono",
+    monospace;
+}
+
+html {
+  font-family: "Segoe UI", "Open Sans", sans-serif;
+}
+
+img.menu-title {
+  height: 3ex;
+  align-self: center;
+}
