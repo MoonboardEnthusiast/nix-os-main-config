@@ -69,6 +69,6 @@ let myScript = ''
 in
 {
   environment.systemPackages = [
-    (pkgs.writeScriptBin "phoenix" myScript)
+    (pkgs.writeScriptBin "nixos-helper" myScript)
   ];
 }

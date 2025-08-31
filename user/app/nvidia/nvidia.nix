@@ -1,4 +1,5 @@
 { config, lib, pkgs, ... }:
+# Currently unused and relies on cuda.nix for setting this up.
 {
   options = {
     nvidia.enable = lib.mkEnableOption "enables nvidia options";
