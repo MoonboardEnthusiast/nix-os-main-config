@@ -10,4 +10,4 @@
     safe.directory = [ ("/home/" + userSettings.username + "/.dotfiles")
                        ("/home/" + userSettings.username + "/.dotfiles/.git") ];
   };
-}
+

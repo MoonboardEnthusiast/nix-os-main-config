@@ -1,1 +1,1 @@
-Would add flatpak when moving away from WSL, as currently I have no need of starting desktop applications from there.
+Would add flatpak when moving away from WSL, s currently I have no need of starting desktop applications from there.
