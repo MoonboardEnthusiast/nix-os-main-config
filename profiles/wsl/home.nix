@@ -9,10 +9,8 @@
   programs.home-manager.enable = true;
 
   imports = [
-              ../../user/shell/sh.nix # My zsh and bash config
-              ../../user/shell/cli-collection.nix # Useful CLI apps
-              ../../user/style/stylix.nix # Styling and themes for my apps
-              ../../user/app/.bundle.nix
+              ../../user/.bundle.nix
+              ../../system/.bundle.nix
             ];
 
   home.stateVersion = "22.11"; # Please read the comment before changing.
