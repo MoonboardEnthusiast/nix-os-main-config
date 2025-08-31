@@ -1,2 +1,0 @@
-Hosts all nix flakes for user style, theme, background, polarity
-Currently not used, as more important modules are created first
