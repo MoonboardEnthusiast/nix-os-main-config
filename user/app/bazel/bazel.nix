@@ -10,11 +10,6 @@ let
     };
   });
 in {
-  # Shell aliases for all users
-  environment.shellAliases = {
-    bazel = "bazelisk";
-  };
- 
   programs.nix-ld.libraries = with pkgs; [
   # Add any libraries bazelisk might need
   stdenv.cc.cc
