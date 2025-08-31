@@ -8,26 +8,19 @@
         system = "x86_64-linux"; # system arch
         hostname = "snowfire"; # hostname
         profile = "personal"; # select a profile defined from my profiles directory
-        timezone = "America/Chicago"; # select timezone
+        timezone = "Europe/London"; # select timezone
         locale = "en_US.UTF-8"; # select locale
         bootMode = "uefi"; # uefi or bios
-        bootMountPath = "/boot"; # mount path for efi boot partition; only used for uefi boot mode
-        grubDevice = ""; # device identifier for grub; only used for legacy (bios) boot mode
-        gpuType = "amd"; # amd, intel or nvidia; only makes some slight mods for amd at the moment
       };
 
       # ----- USER SETTINGS ----- #
       userSettings = rec {
-        username = "emmet"; # username
-        name = "Emmet"; # name/identifier
-        email = "emmet@librephoenix.com"; # email (used for certain configurations)
+        username = "MoonboardEnthusiast"; # username
+        name = "MoonboardEnthusiast"; # name/identifier
+        email = "sebastian.riedl93@gmail.com"; # email (used for certain configurations)
         dotfilesDir = "~/.dotfiles"; # absolute path of the local repo
         theme = "io"; # selcted theme from my themes directory (./themes/)
-        wm = "hyprland"; # Selected window manager or desktop environment; must select one in both ./user/wm/ and ./system/wm/
         # window manager type (hyprland or x11) translator
-        wmType = if ((wm == "hyprland") || (wm == "plasma")) then "wayland" else "x11";
-        browser = "qutebrowser"; # Default browser; must select one from ./user/app/browser/
-        spawnBrowser = if ((browser == "qutebrowser") && (wm == "hyprland")) then "qutebrowser-hyprprofile" else (if (browser == "qutebrowser") then "qutebrowser --qt-flag enable-gpu-rasterization --qt-flag enable-native-gpu-memory-buffers --qt-flag num-raster-threads=4" else browser); # Browser spawn command must be specail for qb, since it doesn't gpu accelerate by default (why?)
         defaultRoamDir = "Personal.p"; # Default org roam directory relative to ~/Org
         term = "alacritty"; # Default terminal command;
         font = "Intel One Mono"; # Selected font
@@ -98,14 +91,6 @@
         system = systemSettings.system;
       };
 
-      pkgs-kdenlive = import inputs.kdenlive-pin-nixpkgs {
-        system = systemSettings.system;
-      };
-
-      pkgs-nwg-dock-hyprland = import inputs.nwg-dock-hyprland-pin-nixpkgs {
-        system = systemSettings.system;
-      };
-
       # configure lib
       # use nixpkgs if running a server (homelab or worklab profile)
       # otherwise use patched nixos-unstable nixpkgs
@@ -144,8 +129,6 @@
             # pass config variables from above
             inherit pkgs-stable;
             inherit pkgs-emacs;
-            inherit pkgs-kdenlive;
-            inherit pkgs-nwg-dock-hyprland;
             inherit systemSettings;
             inherit userSettings;
             inherit inputs;
@@ -169,21 +152,7 @@
           };
         };
       };
-      nixOnDroidConfigurations = {
-        inherit pkgs;
-        default = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-          modules = [ ./profiles/nix-on-droid/configuration.nix ];
-        };
-        extraSpecialArgs = {
-          # pass config variables from above
-          inherit pkgs-stable;
-          inherit pkgs-emacs;
-          inherit systemSettings;
-          inherit userSettings;
-          inherit inputs;
-        };
-      };
-
+      
       packages = forAllSystems (system:
         let pkgs = nixpkgsFor.${system};
         in {
@@ -214,7 +183,6 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "nixpkgs/nixos-24.05";
     emacs-pin-nixpkgs.url = "nixpkgs/f72123158996b8d4449de481897d855bc47c7bf6";
-    kdenlive-pin-nixpkgs.url = "nixpkgs/cfec6d9203a461d9d698d8a60ef003cac6d0da94";
 
     home-manager-unstable.url = "github:nix-community/home-manager/master";
     home-manager-unstable.inputs.nixpkgs.follows = "nixpkgs";

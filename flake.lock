@@ -472,21 +472,6 @@
         "type": "github"
       }
     },
-    "kdenlive-pin-nixpkgs": {
-      "locked": {
-        "lastModified": 1709012981,
-        "narHash": "sha256-/D10ohogluwFIl5NXQxJx6ag6fuwA1KEAO8Ia5GDhhM=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "cfec6d9203a461d9d698d8a60ef003cac6d0da94",
-        "type": "github"
-      },
-      "original": {
-        "id": "nixpkgs",
-        "rev": "cfec6d9203a461d9d698d8a60ef003cac6d0da94",
-        "type": "indirect"
-      }
-    },
     "lix": {
       "flake": false,
       "locked": {
@@ -969,7 +954,6 @@
         "emacs-pin-nixpkgs": "emacs-pin-nixpkgs",
         "home-manager-stable": "home-manager-stable",
         "home-manager-unstable": "home-manager-unstable",
-        "kdenlive-pin-nixpkgs": "kdenlive-pin-nixpkgs",
         "lix-module": "lix-module",
         "magit-file-icons": "magit-file-icons",
         "mini-frame": "mini-frame",
