@@ -30,12 +30,6 @@ sudo nix-channel --update
 # Patch flake.nix with different username/name and remove email by default
 sed -i "0,/MoonboardEnthusiast/s//$(whoami)/" $SCRIPT_DIR/flake.nix
 
-# Open up editor to manually edit flake.nix before install
-if [ -z "$EDITOR" ]; then
-    EDITOR=nano;
-fi
-$EDITOR $SCRIPT_DIR/flake.nix;
-
 # Permissions for files that should be owned by root
 sudo $SCRIPT_DIR/harden.sh $SCRIPT_DIR
 
