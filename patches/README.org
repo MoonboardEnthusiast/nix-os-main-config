@@ -1,4 +1,4 @@
-#+title: I never thought I'd have to do this, but here we are
++title: I never thought I'd have to do this, but here we are
 #+author: Emmet
 
 Since I use =nixpkgs-unstable= (I am an Arch user by heart), there are some cases where certain packages will break or fail to build (usually due to my extremely customized, non-standard system).

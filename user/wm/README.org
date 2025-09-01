@@ -1,1 +1,0 @@
-This could be used to host windows manager nix files, as I am currently only using this config in a WSL setup, I opted out of these more obscure solutions compared to hyprland setups:

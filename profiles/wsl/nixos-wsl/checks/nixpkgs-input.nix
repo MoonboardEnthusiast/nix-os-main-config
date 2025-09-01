@@ -1,8 +1,13 @@
-{ runCommand
-, gnugrep
-, ...
-}:
-runCommand "check-nixpkgs-input" { } ''
-  ${gnugrep}/bin/grep -E 'nixpkgs.url *= *"github:NixOS/nixpkgs/nixos-(unstable|[0-9]+.[0-9]+)";' ${./../flake.nix}
-  touch $out
-''
+{ config, pkgs, userSettings, ... }:
+
+{
+  home.packages = [ pkgs.git ];
+  programs.git.enable = true;
+  programs.git.userName = userSettings.name;
+  programs.git.userEmail = userSettings.email;
+  programs.git.extraConfig = {
+    init.defaultBranch = "main";
+    safe.directory = [ ("/home/" + userSettings.username + "/.dotfiles")
+                       ("/home/" + userSettings.username + "/.dotfiles/.git") ];
+  };
+}

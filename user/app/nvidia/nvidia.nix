@@ -18,7 +18,7 @@
       steam-hardware.enable = true;
 
       nvidia = {
-        # Modesetting is required.
+        # Modesetting is required
         modesetting.enable = true;
 
         # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
