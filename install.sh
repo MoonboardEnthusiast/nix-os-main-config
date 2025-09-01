@@ -9,7 +9,8 @@ if [ $# -gt 0 ]
   else
     SCRIPT_DIR="$HOME/nix"
 fi
-nix-shell -p git --command "git clone https://gitlab.com/librephoenix/nixos-config $SCRIPT_DIR"
+nix-shell -p git --command "git clone https://github.com/MoonboardEnthusiast/nix-os-main-config.git $SCRIPT_DIR"
+
 
 # Generate hardware config for new system
 sudo nixos-generate-config --show-hardware-config > $SCRIPT_DIR/system/hardware-configuration.nix
@@ -29,6 +30,9 @@ sudo nix-channel --update
 
 # Patch flake.nix with different username/name and remove email by default
 sed -i "0,/MoonboardEnthusiast/s//$(whoami)/" $SCRIPT_DIR/flake.nix
+sed -i "0,/MoonboardEnthusiast/s//$(getent passwd $(whoami) | cut -d ':' -f 5 | cut -d ',' -f 1)/" $SCRIPT_DIR/flake.nix
+sed -i "s/striedlful@gmail.com//" $SCRIPT_DIR/flake.nix
+sed -i "s+~/.dotfiles+$SCRIPT_DIR+g" $SCRIPT_DIR/flake.nix
 
 # Permissions for files that should be owned by root
 sudo $SCRIPT_DIR/harden.sh $SCRIPT_DIR
