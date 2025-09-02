@@ -1,5 +1,57 @@
 {
-  description = "Flake of LibrePhoenix";
+  description = "Main system configuration";
+
+  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, aagl, ...}@input:
+    let
+      system = "x86_64-linux";
+
+      pkgs = import nixpkgs {
+        system = system;
+        config.AllowUnfree = true;
+      };
+
+      pkgs-stage = import nixpkgs-stable {
+        system = system;
+        config.AllowUnfree = true;
+      };
+      specialArgs = inputs // {
+        inherit pkgs-stable pkgs inputs;
+      };
+      shared-modules = [ 
+        home-manager.nixosModules.home-manager
+        {
+          home-manager = {
+            useUserPackages = true;
+            useGlobalPkgs = true;
+          };
+        }
+      ]; 
+    in
+    {
+      nixosConfigurations = {
+        wsl = nixpkgs.lib.nixosSystem {
+          inherit specialArgs system;
+
+          modules = shared-modules ++ [
+              ./profiles/wsl/configuration.nix   
+          ]
+        }
+      }
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   outputs = inputs@{ self, ... }:
     let

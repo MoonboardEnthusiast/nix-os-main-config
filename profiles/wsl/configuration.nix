@@ -2,16 +2,20 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ lib, pkgs, systemSettings, userSettings, ... }:
+{config, lib, pkgs, pkgs-stable, modulesPath, ... }:
 
-with lib;
 let
-  nixos-wsl = import ./nixos-wsl;
+  systemSettings = {
+    system = "x86_64-linux";
+    hostname = "wsl";
+    timezone = "Europe/Germany";
+    locale = "en_US.UTF-8";
+  };
 in
 {
   imports =
-    [ nixos-wsl.nixosModules.wsl
-     ../../system/security/doas.nix
+    [ 
+      #../../system/security/doas.nix
       ../../system/security/gpg.nix
       ../../system/security/blocklist.nix
       ../../system/security/firewall.nix

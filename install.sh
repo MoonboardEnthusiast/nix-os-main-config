@@ -9,7 +9,7 @@ if [ $# -gt 0 ]
   else
     SCRIPT_DIR="$HOME/nix"
 fi
-nix-shell -p git --command "git clone https://gitlab.com/librephoenix/nixos-config $SCRIPT_DIR"
+nix-shell -p git --command "git clone https://gitlab.com/MoonboardEnthusiast/nix-os-main-config $SCRIPT_DIR"
 
 # Generate hardware config for new system
 sudo nixos-generate-config --show-hardware-config > $SCRIPT_DIR/system/hardware-configuration.nix
@@ -37,5 +37,5 @@ sudo $SCRIPT_DIR/harden.sh $SCRIPT_DIR
 sudo nixos-rebuild switch --flake $SCRIPT_DIR;
 
 # Install and build home-manager configuration
-nix run home-manager/master --extra-experimental-features nix-command --extra-experimental-features flakes -- switch --flake $SCRIPT_DIR#user;
+home-manager switch --flake $SCRIPT_DIR;
 
