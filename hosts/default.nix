@@ -1,7 +1,6 @@
 { lib, config, pkgs, pkgs-stable, ... }:
 {
   # services
-  garbageCollect.enable = true;
   timesyncd.enable = true;
   # pkgs
   pkgsCore.enable = true;

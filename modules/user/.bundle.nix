@@ -6,5 +6,6 @@
     ./lang/.bundle.nix
     ./pkgs/.bundle.nix
     ./style/stylix.nix
+    ./shell/.bundle.nix
     ];
 }

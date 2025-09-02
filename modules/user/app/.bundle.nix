@@ -10,5 +10,6 @@
       ./ranger/ranger.nix
       ./terminal/alacritty.nix
       ./terminal/kitty.nix
+      ./tmux/tmux.nix
    ];
 }

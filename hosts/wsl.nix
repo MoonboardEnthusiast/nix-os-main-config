@@ -3,19 +3,18 @@ let
   systemSettings = {
     system = "x86_64-linux";
     hostname = "wslwork";
-    timezone = "Europe/Rome";
+    timezone = "Europe/Germany";
     locale = "en_US.UTF-8";
   };
 in
 {
   imports =
     [
-      (modulesPath + "/profiles/qemu-guest.nix")
+      (modulesPath + "/installer/scan/not-detected.nix")
       ./default.nix
     ];
 
   gnome.enable = lib.mkDefault false;
-  bluetooth.enable = lib.mkDefault false;
 
   docker.enable = true;
   nfs.enable = true;
@@ -35,7 +34,7 @@ in
 
   wsl = {
     enable = true;
-    defaultUser = "shyonae";
+    defaultUser = "nixos";
     wslConf.automount.root = "/mnt";
     wslConf.interop.appendWindowsPath = false;
     wslConf.network.generateHosts = false;
@@ -53,7 +52,7 @@ in
 
   nix = {
     settings = {
-      trusted-users = [ "shyonae" ];
+      trusted-users = [ "Moonboardenthusiast", "nixos", "wsl" ];
       accept-flake-config = true;
       auto-optimise-store = true;
     };
@@ -157,9 +156,6 @@ in
       fsType = "9p";
     };
 
-  swapDevices =
-    [{ device = "/dev/disk/by-uuid/7eea8ec2-8ac8-4cf4-bee6-d0a427e092fe"; }];
-
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
   # still possible to use this option, but it's recommended to use it in conjunction
@@ -169,3 +165,4 @@ in
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }
+
