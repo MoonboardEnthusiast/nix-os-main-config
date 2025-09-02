@@ -52,7 +52,7 @@ in
 
   nix = {
     settings = {
-      trusted-users = [ "Moonboardenthusiast", "nixos", "wsl" ];
+      trusted-users = [ "MoonboardEnthusiast", "nixos", "wsl" ];
       accept-flake-config = true;
       auto-optimise-store = true;
     };

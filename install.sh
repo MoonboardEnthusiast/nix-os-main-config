@@ -9,7 +9,6 @@ if [ $# -gt 0 ]
   else
     SCRIPT_DIR="$HOME/nix"
 fi
-nix-shell -p git --command "git clone https://gitlab.com/MoonboardEnthusiast/nix-os-main-config $SCRIPT_DIR"
 
 # Generate hardware config for new system
 sudo nixos-generate-config --show-hardware-config > $SCRIPT_DIR/system/hardware-configuration.nix
