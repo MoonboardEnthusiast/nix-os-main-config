@@ -1,108 +1,80 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ lib, pkgs, systemSettings, userSettings, ... }:
-
-with lib;
+{ pkgs, pkgs-stable, lib, inputs, ... }:
 let
-  nixos-wsl = import ./nixos-wsl;
+  userSettings = {
+    username = "MoonboardEnthusiast";
+    description = "WSL basic user setup";
+    email = "";
+    nixMainFlakeFolder = "$HOME/nix";
+    fontName = "Fantasque Sans Mono"; # Selected font
+    fontPkg = pkgs.fantasque-sans-mono; # Font package
+    term = "kitty";
+    browser = "floorp"; # Default browser
+    editor = "vim"; # Default editor
+    polarity = "dark"; # stylix polarity
+    cursorName = "Kasane_Teto";
+    cursorSize = 20;
+    base16SchemeName = "solarized-dark";
+    cursorPath = "/home/${userSettings.username}/nix/users/themes/cursors/Kasane_Teto";
+  };
 in
 {
-  imports =
-    [ nixos-wsl.nixosModules.wsl
-     ../../system/security/doas.nix
-      ../../system/security/gpg.nix
-      ../../system/security/blocklist.nix
-      ../../system/security/firewall.nix
-      ../../system/security/firejail.nix
-      ../../system/style/stylix.nix
-    ];
 
-  wsl = {
-    enable = true;
-    automountPath = "/mnt";
-    defaultUser = userSettings.username;
-    startMenuLaunchers = true;
+  users = {
+    defaultUserShell = pkgs.zsh;
 
-    # Enable native Docker support
-    # docker-native.enable = true;
-
-    # Enable integration with Docker Desktop (needs to be installed)
-    # docker-desktop.enable = true;
-
+    users.${userSettings.username} = {
+      isNormalUser = true;
+      description = userSettings.description;
+      extraGroups = [ "networkmanager" "wheel" "input" "dialout" "audio" "adbusers" "docker" "libvirtd" "tty" "video" ];
+      uid = 1000;
+    };
   };
 
-  # Fix nix path
-  nix.nixPath = [ "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
-                  "nixos-config=$HOME/dotfiles/system/configuration.nix"
-                  "/nix/var/nix/profiles/per-user/root/channels"
-                ];
+  home-manager = {
+    extraSpecialArgs = {
+      inherit pkgs pkgs-stable userSettings;
+    };
 
-  # Experimental features
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+    backupFileExtension = "backup";
 
-  # Ensure nix flakes are enabled
-  nix.extraOptions = ''
-    experimental-features = nix-command flakes
-  '';
+    users.${userSettings.username} = { pkgs, ... }: {
 
-  # I'm sorry Stallman-taichou
-  nixpkgs.config.allowUnfree = true;
+      imports = [
+        ../default.nix
+        ../../modules/user/.bundle.nix
+        inputs.stylix.homeManagerModules.stylix
+      ];
 
-  # Kernel modules
-  boot.kernelModules = [ "i2c-dev" "i2c-piix4" "cpufreq_powersave" ];
+      homePkgsCore.enable = true;
+      homePkgsOther.enable = true;
+      syncthing.enable = true;
 
-  # Networking
-  networking.hostName = systemSettings.hostname; # Define your hostname.
+      home = {
+        pointerCursor = {
+          gtk.enable = true;
+          x11.enable = true;
+          # size = userSettings.cursorSize; # set in stylix
+          # name = userSettings.cursorName; # set in stylix
+          package = lib.mkForce (
+            pkgs.runCommand "kasane-teto-cursor" { } ''
+              mkdir -p $out/share/icons
+              ln -s ${userSettings.cursorPath} $out/share/icons/
+            ''
+          );
+        };
 
-  # Timezone and locale
-  time.timeZone = systemSettings.timezone; # time zone
-  i18n.defaultLocale = systemSettings.locale;
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = systemSettings.locale;
-    LC_IDENTIFICATION = systemSettings.locale;
-    LC_MEASUREMENT = systemSettings.locale;
-    LC_MONETARY = systemSettings.locale;
-    LC_NAME = systemSettings.locale;
-    LC_NUMERIC = systemSettings.locale;
-    LC_PAPER = systemSettings.locale;
-    LC_TELEPHONE = systemSettings.locale;
-    LC_TIME = systemSettings.locale;
+        username = userSettings.username;
+        homeDirectory = "/home/${userSettings.username}";
+        stateVersion = "23.05";
+
+        sessionVariables = {
+          # NIXOS_OZONE_WL = "1"; # Hint electron apps to use wayland
+          EDITOR = lib.mkForce userSettings.editor;
+          TERM = userSettings.term;
+          BROWSER = userSettings.browser;
+          MOZ_ENABLE_WAYLAND = 0;
+        };
+      };
+    };
   };
-
-  # User account
-  users.users.${userSettings.username} = {
-    isNormalUser = true;
-    description = userSettings.name;
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [];
-    uid = 1000;
-  };
-
-  # System packages
-  environment.systemPackages = with pkgs; [
-    vim
-    wget
-    zsh
-    git
-    home-manager
-  ];
-
-  # I use zsh btw
-  environment.shells = with pkgs; [ zsh ];
-  users.defaultUserShell = pkgs.zsh;
-  programs.zsh.enable = true;
-
-  xdg.portal = {
-    enable = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal
-      pkgs.xdg-desktop-portal-gtk
-    ];
-  };
-
-  # It is ok to leave this unchanged for compatibility purposes
-  system.stateVersion = "22.05";
-
 }
