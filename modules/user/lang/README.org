@@ -1,2 +1,0 @@
-Hosts nix configuration flakes for language pkgs and setup. Most interesting addition will be cuda and bazel.
-Get rid of these system wide configs once project specifics can used with nix.shell or default.nix in the respective project.

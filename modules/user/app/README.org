@@ -1,1 +1,0 @@
-Hosts configuration nix flakes for all user specific tools that I need to have installed.

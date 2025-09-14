@@ -1,80 +1,61 @@
-{ pkgs, pkgs-stable, lib, inputs, ... }:
-let
-  userSettings = {
-    username = "MoonboardEnthusiast";
-    description = "WSL basic user setup";
-    email = "";
-    nixMainFlakeFolder = "$HOME/nix";
-    fontName = "Fantasque Sans Mono"; # Selected font
-    fontPkg = pkgs.fantasque-sans-mono; # Font package
-    term = "kitty";
-    browser = "floorp"; # Default browser
-    editor = "vim"; # Default editor
-    polarity = "dark"; # stylix polarity
-    cursorName = "Kasane_Teto";
-    cursorSize = 20;
-    base16SchemeName = "solarized-dark";
-    cursorPath = "/home/${userSettings.username}/nix/users/themes/cursors/Kasane_Teto";
-  };
-in
+# Edit this configuration file to define what should be installed on
+# your system. Help is available in the configuration.nix(5) man page, on
+# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
+
+# NixOS-WSL specific options are documented on the NixOS-WSL repository:
+# https://github.com/nix-community/NixOS-WSL
+
+{ config, lib, pkgs, ... }:
 {
+  imports = [
+    ../../system/.bundle.nix
+    # ../../system/hardware-configuration.nix
+  ];
 
-  users = {
-    defaultUserShell = pkgs.zsh;
+  wsl.enable = true;
+  wsl.defaultUser = "nixos";
 
-    users.${userSettings.username} = {
-      isNormalUser = true;
-      description = userSettings.description;
-      extraGroups = [ "networkmanager" "wheel" "input" "dialout" "audio" "adbusers" "docker" "libvirtd" "tty" "video" ];
-      uid = 1000;
-    };
-  };
-
-  home-manager = {
-    extraSpecialArgs = {
-      inherit pkgs pkgs-stable userSettings;
-    };
-
-    backupFileExtension = "backup";
-
-    users.${userSettings.username} = { pkgs, ... }: {
-
-      imports = [
-        ../default.nix
-        ../../modules/user/.bundle.nix
-        inputs.stylix.homeManagerModules.stylix
-      ];
-
-      homePkgsCore.enable = true;
-      homePkgsOther.enable = true;
-      syncthing.enable = true;
-
-      home = {
-        pointerCursor = {
-          gtk.enable = true;
-          x11.enable = true;
-          # size = userSettings.cursorSize; # set in stylix
-          # name = userSettings.cursorName; # set in stylix
-          package = lib.mkForce (
-            pkgs.runCommand "kasane-teto-cursor" { } ''
-              mkdir -p $out/share/icons
-              ln -s ${userSettings.cursorPath} $out/share/icons/
-            ''
-          );
-        };
-
-        username = userSettings.username;
-        homeDirectory = "/home/${userSettings.username}";
-        stateVersion = "23.05";
-
-        sessionVariables = {
-          # NIXOS_OZONE_WL = "1"; # Hint electron apps to use wayland
-          EDITOR = lib.mkForce userSettings.editor;
-          TERM = userSettings.term;
-          BROWSER = userSettings.browser;
-          MOZ_ENABLE_WAYLAND = 0;
-        };
-      };
-    };
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+  # Add any libraries bazelisk might need
+  stdenv.cc.cc
+  glibc
+  ];
+  # This value determines the NixOS release from which the default
+  # settings for stateful data, like file locations and database versions
+  # on your system were taken. It's perfectly fine and recommended to leave
+  # this value at the release version of the first install of this system.
+  # Before changing this value read the documentation for this option
+  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+  nixpkgs.config.allowUnfree = true;
+  system.stateVersion = "25.05"; # Did you read the comment?
+  environment.systemPackages = with pkgs; [
+    # C/C++ LSP
+    clang-tools # includes clangd
+    nixfmt-classic
+    # Rust LSP and tools
+    rust-analyzer
+    rustc
+    cargo
+    ripgrep
+    # Optional but useful
+    gcc
+    coreutils
+    go
+    gdb
+    cmake
+    gnumake
+    # shared clipboard
+    wl-clipboard
+    # clang compiler
+    clang_21
+  ];
+  services.xserver.enable = true;
+  services.dbus.enable = true;
+  nix.settings.experimental-features = ["nix-command" "flakes"];
+  users.defaultUserShell = pkgs.zsh;
+  programs.zsh = {
+    enable = true;
   };
 }
+

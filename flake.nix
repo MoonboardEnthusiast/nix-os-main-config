@@ -1,102 +1,98 @@
 {
-  description = "My system configuration";
-
-  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, aagl, ... }@inputs:
-    let
-      system = "x86_64-linux";
-
-      pkgs = import nixpkgs {
-        system = system;
-        config.allowUnfree = true;
-      };
-
-      pkgs-stable = import nixpkgs-stable {
-        system = system;
-        config.allowUnfree = true;
-      };
-
-      specialArgs = inputs // {
-        inherit pkgs-stable pkgs inputs;
-      };
-
-      shared-modules = [
-        home-manager.nixosModules.home-manager
-        {
-          home-manager = {
-            useUserPackages = true;
-            useGlobalPkgs = true;
-          };
-        }
-      ];
-
-    in
-    {
-      nixosConfigurations = {
-
-        wsl = nixpkgs.lib.nixosSystem {
-
-          inherit specialArgs system;
-
-          modules = shared-modules ++ [
-            ./hosts/wsl.nix
-            ./modules/system/.bundle.nix
-            ./profiles/wsl/configuration.nix
-            inputs.base16.nixosModule
-            inputs.nixos-wsl.nixosModules.wsl
-            inputs.nix-ld.nixosModules.nix-ld
-            inputs.nix-index-database.nixosModules.nix-index
-          ];
-        };
-      };
-    };
-
-
-  ################# INPUTS #################
-
+  description = "My NixOS configuration";
 
   inputs = {
-
-    nixpkgs.url = "nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "nixpkgs/nixos-24.05";
-
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    stylix = {
-      url = "github:danth/stylix";
-      inputs.home-manager.follows = "home-manager";
-    };
-
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "nixpkgs/nixos-25.05";
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    nix-index-database = {
-      url = "github:nix-community/nix-index-database";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    base16 = {
-      url = "github:SenchoPens/base16.nix";
-    };
-
-    tt-schemes = {
-      url = "github:tinted-theming/schemes";
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager-unstable.url = "github:nix-community/home-manager/master";
+    home-manager-unstable.inputs.nixpkgs.follows = "nixpkgs";
+    stylix.url = "github:danth/stylix";
+    nvchad = {
+      url = "github:NvChad/starter";
       flake = false;
     };
 
-    aagl = {
-      url = "github:ezKEa/aagl-gtk-on-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
-}
+    nix-doom-emacs.url = "github:nix-community/nix-doom-emacs";
+    nix-doom-emacs.inputs.nixpkgs.follows = "nixpkgs";
 
+    nix-straight.url = "github:librephoenix/nix-straight.el/pgtk-patch";
+    nix-straight.flake = false;
+    nix-doom-emacs.inputs.nix-straight.follows = "nix-straight";
+
+  };
+  
+  outputs = inputs@{ self, ... }:
+  let
+    systemSettings = {
+        system = "x86_64-linux"; # system arch
+        profile = "wsl"; # select a profile defined in profiles
+      };
+    userSettings = rec {
+          username = "nixos"; # username
+          name = "nixos"; # name/identifier
+          email = "striedlful@gmail.com"; # email (used for certain configurations)
+          dotfilesDir = "~/.dotfiles"; # absolute path of the local repo
+          theme = "io"; # selcted theme from my themes directory (./themes/)
+          font = "Intel One Mono";
+    };
+    home-manager = inputs.home-manager-unstable;
+    pkgs-stable = import inputs.nixpkgs-stable {
+        system = systemSettings.system;
+        config = {
+          allowUnfree = true;
+          allowUnfreePredicate = (_: true);
+        };
+    };
+    pkgs-unstable = import inputs.nixpkgs {
+        system = systemSettings.system;
+        config = {
+          allowUnfree = true;
+          allowUnfreePredicate = (_: true);
+        };
+    };
+    pkgs-emacs = import inputs.nixpkgs {
+        system = systemSettings.system;
+    };
+    pkgs = pkgs-unstable;
+    lib = inputs.nixpkgs.lib;
+    nixos-wsl = inputs.nixos-wsl;
+   in{
+    homeConfigurations = {
+        user = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [
+            (./. + "/profiles" + ("/" + systemSettings.profile) + "/home.nix")
+          ];
+          extraSpecialArgs = {
+            # pass config variables from above
+            inherit userSettings;
+            inherit pkgs-stable;
+            inherit pkgs-emacs;
+            inherit inputs;
+          };
+        };
+    };
+    nixosConfigurations = {
+        system = lib.nixosSystem {
+          system = systemSettings.system;
+          modules = [
+            (./. + "/profiles" + ("/" + systemSettings.profile) + "/configuration.nix")
+            nixos-wsl.nixosModules.wsl
+            # inputs.lix-module.nixosModules.default
+          ]; # load configuration.nix from selected PROFILE
+          specialArgs = {
+            # pass config variables from above
+            inherit pkgs-stable;
+            inherit systemSettings;
+            inherit userSettings;
+            inherit inputs;
+          };
+        };
+      };
+};
+}
