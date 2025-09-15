@@ -1,7 +1,5 @@
 #!/bin/sh
-SCRIPT_DIR=$1
-
-sudo nixos-generate-config --show-hardware-config > $SCRIPT_DIR/system/hardware-configuration.nix
+sudo nixos-generate-config --show-hardware-config > system/hardware-configuration.nix
 
 sudo nixos-rebuild switch --flake .#system
 

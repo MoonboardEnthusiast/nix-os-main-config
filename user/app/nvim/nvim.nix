@@ -19,7 +19,6 @@
     yaml-language-server
     sqls
     nmap
-    ripgrep
   ];
   programs.neovim = {
     viAlias = true;

@@ -9,7 +9,6 @@
 {
   imports = [
     ../../system/.bundle.nix
-    # ../../system/hardware-configuration.nix
   ];
 
   wsl.enable = true;
@@ -29,30 +28,12 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   nixpkgs.config.allowUnfree = true;
   system.stateVersion = "25.05"; # Did you read the comment?
-  environment.systemPackages = with pkgs; [
-    # C/C++ LSP
-    clang-tools # includes clangd
-    nixfmt-classic
-    # Rust LSP and tools
-    rust-analyzer
-    rustc
-    cargo
-    ripgrep
-    # Optional but useful
-    gcc
-    coreutils
-    go
-    gdb
-    cmake
-    gnumake
-    # shared clipboard
-    wl-clipboard
-    # clang compiler
-    clang_21
-  ];
+
   services.xserver.enable = true;
   services.dbus.enable = true;
+
   nix.settings.experimental-features = ["nix-command" "flakes"];
+  
   users.defaultUserShell = pkgs.zsh;
   programs.zsh = {
     enable = true;

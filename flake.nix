@@ -16,14 +16,6 @@
       url = "github:NvChad/starter";
       flake = false;
     };
-
-    nix-doom-emacs.url = "github:nix-community/nix-doom-emacs";
-    nix-doom-emacs.inputs.nixpkgs.follows = "nixpkgs";
-
-    nix-straight.url = "github:librephoenix/nix-straight.el/pgtk-patch";
-    nix-straight.flake = false;
-    nix-doom-emacs.inputs.nix-straight.follows = "nix-straight";
-
   };
   
   outputs = inputs@{ self, ... }:
@@ -55,9 +47,6 @@
           allowUnfreePredicate = (_: true);
         };
     };
-    pkgs-emacs = import inputs.nixpkgs {
-        system = systemSettings.system;
-    };
     pkgs = pkgs-unstable;
     lib = inputs.nixpkgs.lib;
     nixos-wsl = inputs.nixos-wsl;
@@ -72,7 +61,6 @@
             # pass config variables from above
             inherit userSettings;
             inherit pkgs-stable;
-            inherit pkgs-emacs;
             inherit inputs;
           };
         };
