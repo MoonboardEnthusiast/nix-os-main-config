@@ -2,7 +2,9 @@
 {
   imports = [
     ./app/bazel/bazel.nix
+    ./app/claude-code/claude-code.nix
     ./app/nvim/nvim.nix
+    ./app/opencode/opencode.nix
     ./app/ranger/ranger.nix
     ./app/wlclipboard/wlclipboard.nix
     ./lang/cc/cc.nix
