@@ -13,6 +13,9 @@
   home.packages = with pkgs; [
     git
     zsh
+    claude-code
+    opencode
+    nodejs_20
   ];
 
   # Git configuration
@@ -22,6 +25,14 @@
     userEmail = "striedlful@gmail.com";
   };
 
+  # OpenSpec wrapper
+  home.file.".local/bin/openspec" = {
+    text = ''
+      #!/usr/bin/env bash
+      exec ${pkgs.nodejs_20}/bin/npx @fission-ai/openspec@latest "$@"
+    '';
+    executable = true;
+  };
   # Let Home Manager install and manage itself
   programs.home-manager.enable = true;
 }
